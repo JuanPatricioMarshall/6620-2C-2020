@@ -8,58 +8,8 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
+#include "hash.h"
 
-
-#define STRING_HASH_INIT 1
-#define STRING_HASH_MORE 2
-#define STRING_HASH_DONE 3
-
-typedef struct {
-	int8_t flag;
-	int32_t hash;
-	size_t size;
-} string_hash;
-
-static void
-string_hash_init(string_hash *h)
-{
-	h->flag = STRING_HASH_INIT;
-	h->hash = 0;
-	h->size = 0;
-}
-
-static void
-string_hash_more(string_hash *sh, char *str, size_t len)
-{
-	assert(sh->flag == STRING_HASH_INIT || sh->flag == STRING_HASH_MORE);
-
-	if (sh->flag == STRING_HASH_INIT) {
-		sh->flag = STRING_HASH_MORE;
-		sh->hash = (*str) << 7;
-	}
-
-	while ((*str) != 0 && len--) {
-		sh->hash = (1000003 * sh->hash) ^ *str++;
-		sh->size++;
-	}
-}
-
-static void
-string_hash_done(string_hash *sh)
-{
-	assert(sh->flag == STRING_HASH_INIT || sh->flag == STRING_HASH_MORE);
-
-	if ((sh->hash ^= sh->size) == -1)
-		sh->hash = -2;
-
-	sh->flag = STRING_HASH_DONE;
-}
-
-static int32_t
-string_hash_value(string_hash *sh)
-{
-	return sh->hash;
-}
 
 static void
 print_help()
@@ -91,13 +41,13 @@ print_version(){
 int
 main(int argc, char * const argv[])
 {
-	string_hash hash;
-	char *msg = "mensaje para string hash";
-	char *ptr;
-	size_t len = strlen(msg);
-	size_t delta;
-	size_t stride;
-	size_t rem;
+    string_hash hash;
+    char *msg = "mensaje para string hash";
+    char *ptr;
+    size_t len = strlen(msg);
+    size_t delta;
+    size_t stride;
+    size_t rem;
 
     int opt= 0;
 
@@ -160,48 +110,26 @@ main(int argc, char * const argv[])
     printf("Input file %s\n", input_filename);
     printf("Output file %s\n", output_filename);
 
-	for (stride = len; stride >= 1; stride--) {
-		string_hash_init(&hash);
-		ptr = msg;
-		rem = len;
+    for (stride = len; stride >= 1; stride--) {
+        string_hash_init(&hash);
+        ptr = msg;
+        rem = len;
 
-		while (rem) {
-			if (rem >= stride)
-				delta = stride;
-			else
-				delta = rem;
+        while (rem) {
+            if (rem >= stride)
+                delta = stride;
+            else
+                delta = rem;
 
-			string_hash_more(&hash, ptr, delta);
-			rem -= delta;
-			ptr += delta;
-		}
+            string_hash_more(&hash, ptr, delta);
+            rem -= delta;
+            ptr += delta;
+        }
 
-		string_hash_done(&hash);
-		printf("stride %zu hash 0x%04x\n",
-			stride, string_hash_value(&hash));
-	}
+        string_hash_done(&hash);
+        printf("stride %zu hash 0x%04x\n",
+               stride, string_hash_value(&hash));
+    }
 
-	return 0;
+    return 0;
 }
-
-#if 0
-static long string_hash(PyStringObject *a)
-{
-    register Py_ssize_t len;
-    register unsigned char *p;
-    register long x;
-
-    if (a->ob_shash != -1)
-        return a->ob_shash;
-    len = Py_SIZE(a);
-    p = (unsigned char *) a->ob_sval;
-    x = *p << 7;
-    while (--len >= 0)
-        x = (1000003*x) ^ *p++;
-    x ^= Py_SIZE(a);
-    if (x == -1)
-        x = -2;
-    a->ob_shash = x;
-    return x;
-}
-#endif
