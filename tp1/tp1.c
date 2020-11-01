@@ -110,6 +110,30 @@ main(int argc, char * const argv[])
     printf("Input file %s\n", input_filename);
     printf("Output file %s\n", output_filename);
 
+    // estableciendo los archivos de entrada y salida
+    FILE *input_file = stdin;
+    FILE *output_file = stdout;
+    
+    // si vino un -i y el filename es distinto a - hacemos un open de lectura del archivo de input
+    if (input == 0 && input_filename != "-"){
+        input_file = fopen(input_filename,"r");
+        if (input_file == NULL) {
+            printf ("can't open input file, errno = %d\n", errno);
+            return 1;
+        }
+    }
+    
+    // si vino un -o y el filename es distinto a - hacemos un open de escritura del archivo de output
+    if (output == 0 && output_filename != "-"){
+        output_file = fopen(output_filename,"w");
+        if (output_file == NULL) {
+            printf ("Can't open output file, errno = %d\n", errno);
+            return 1;
+        }
+    }
+    
+    // Aca leer de input de a 1 linea y llamar a string hash
+    
     for (stride = len; stride >= 1; stride--) {
         string_hash_init(&hash);
         ptr = msg;
