@@ -115,7 +115,7 @@ main(int argc, char * const argv[])
     FILE *output_file = stdout;
     
     // si vino un -i y el filename es distinto a - hacemos un open de lectura del archivo de input
-    if (input == 0 && strcmp(input_filename,  "-") == 0){
+    if (input == 0 && strcmp(input_filename,  "-") != 0){
         input_file = fopen(input_filename,"r");
         if (input_file == NULL) {
             printf ("can't open input file, errno = %d\n", errno);
@@ -124,7 +124,7 @@ main(int argc, char * const argv[])
     }
     
     // si vino un -o y el filename es distinto a - hacemos un open de escritura del archivo de output
-    if (output == 0 && strcmp(output_filename,  "-") == 0){
+    if (output == 0 && strcmp(output_filename,  "-") != 0){
         output_file = fopen(output_filename,"w");
         if (output_file == NULL) {
             printf ("Can't open output file, errno = %d\n", errno);
