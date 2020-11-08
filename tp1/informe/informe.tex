@@ -1,0 +1,204 @@
+\documentclass[11pt,a4paper]{article}
+
+%Paquetes importados
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{listings}
+\usepackage[rgb,svgnames,table]{xcolor}
+\usepackage{pdfpages}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{afterpage}
+
+\addto\captionsspanish{
+	\renewcommand\tablename{Tabla}
+	\renewcommand\listtablename{Lista de tablas}
+	\renewcommand\lstlistingname{Código}
+	\renewcommand\lstlistlistingname{Lista de código}
+}
+
+\lstset{ % Defino el formato de bloques de código fuente
+	inputencoding=utf8, % Indico la codificación de los archivos de entrada
+	extendedchars=true, % Extiendo los caracteres
+	% Escapeo caracteres especiales
+	literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1,
+	showtabs=false, % Indica si se muestran los tabs
+	tabsize=2, % Indica la cantidad de espacios que ocupa un tab
+	showspaces=false, % Indica si muestra los espacios
+	showstringspaces=false, % Indica si muestra los espacios dentro de strings
+	numbers=left, % Posición en que se muestran los números de línea
+	numberstyle=\tiny\color{gray}, % Estilo de los números de línea
+	breaklines=true, % Se parten las líneas que exceden del ancho del documento
+	frame=single, % Formato del marco del entorno
+	backgroundcolor=\color{gray!5}, % Color de fondo
+	basicstyle=\ttfamily\footnotesize, % Estilo de base (familia, tamaño, color)
+	keywordstyle=\color{DarkBlue}, % Estilo de las palabras reservadas
+	stringstyle=\color{red}, % Estilo de los strings
+	commentstyle=\color{DarkGreen}, % Estilo de los comentarios
+	language=Octave, % Espeficica el lenguaje a usar
+	otherkeywords={std,cout} % Agrego palabras reservadas que no se resaltan
+}
+
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
+
+
+\pagestyle{fancy}
+
+\lhead[]{$2^{do}$ Cuatrimestre 2020\\TP 1}
+\chead[]{}
+\rhead[]{\includegraphics[scale=0.2]{logo_fiuba2}}
+
+\lfoot[]{}
+\cfoot[]{}
+\rfoot[]{\thepage / \pageref{LastPage}}
+
+\begin{document}
+\title{TP1 Organización de Computadoras}
+\date{\today}
+
+\begin{titlepage}
+	
+	\begin{figure}[H]
+		\raggedright
+		\includegraphics[scale=0.25]{logo_fiuba2.jpg}
+		\hfill
+		\raggedleft
+		\includegraphics[scale=0.2]{logo_uba.png}
+	\end{figure}
+	\rule{\textwidth}{1pt}\par % Thick horizontal line
+	\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+	\rule{\textwidth}{0.4pt}\par % Thin horizontal line
+	
+	\vspace{0.05\textheight} % Whitespace between the top lines and title
+	\centering % Center all text
+	{\Huge UBA FACULTAD DE INGENIERÍA}\\[0.5\baselineskip]
+	{\Large 66.20 Organización de Computadoras}\\[0.5\baselineskip]
+	{\Huge Trabajo Práctico 1}\\[0.75\baselineskip]
+	{\Large 2$^{do}$ Cuatrimestre 2020}\\[0.5\baselineskip]
+	\vspace{0.2\textheight}
+
+
+	\begin{flushleft}
+	\begin{table}[H]
+		\begin{flushleft}
+		\textbf{Integrantes:}\\
+		\vspace{0.01\textheight}
+		\begin{tabular}{l r}
+			Bacigalupo, Ivan  & 98064\\
+			\hspace{0.05\textheight}ibacigaluppo@fi.uba.ar&\\
+			Carballo, Matías   & 93762\\
+			\hspace{0.05\textheight}mcarballo@fi.uba.ar&\\
+			Marshall, Juan Patricio & 95471\\
+			\hspace{0.05\textheight}jmarshall@fi.uba.ar&\\
+		\end{tabular}
+		\end{flushleft}
+	\end{table}
+		
+
+	\end{flushleft}
+	\vspace{0.05\textheight}
+	\vspace{2pt}
+	\vfill
+	\rule{\textwidth}{1pt}\par % Thick horizontal line
+	\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+	\rule{\textwidth}{0.4pt}\par % Thin horizontal line
+	
+\end{titlepage}
+
+\blankpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción}
+El trabajo práctico consistió en la elaboración de un programa escrito en lenguaje C, el cual consistía en el hasheo de cadenas de texto, a partir de archivos de entrada o de la entrada estandar. Ambas entradas de longitud arbitrario, por lo que termina siendo un procesamiento del tipo Streaming.
+El programa esta escrito parcialmente en C, ya que la implementacion de la funcion de hash\_more fue realizada en Codigo Assembly, respetando la ABI de la cátedra para nuestro MIPS emulado en QEMU.
+
+\section{Documentación}
+El uso del programa (tp1) se compone de las siguientes opciones que le son pasadas por parámetro:
+\begin{itemize}
+	\item \texttt{-h} o \texttt{--help}: muestra la ayuda.
+	\item \texttt{-V} o \texttt{--version}: muestra la versión.
+	\item \texttt{-i} o \texttt{--input}: recibe como parámetro un archivo de texto como entrada. En caso de que no usar esta opción, se toma como entrada la entrada estándar. Lo mismo ocurre si no se especifica un nombre de archivo de entrada.
+	\item \texttt{-o} o \texttt{--output}: recibe como parámetro un archivo de texto como salida. En caso de que no usar esta opción, se toma como salida la salida estándar.
+\end{itemize}
+
+\section{Compilación}
+El programa puede ser compilado ubicándose en la carpeta que contiene el código fuente tp1.c y correr el siguiente comando, dado un archivo Makefile:
+
+\texttt{./make tp1}
+
+
+\section{Pruebas}
+Para las pruebas tenemos 2 flujos. El de tests de regresion provistos por la catedra (para la funcion en assembly) y tests de integracion del programa para testear su funcionamiento general.
+
+Para el primero, basta con correr \texttt{make run_regressions}.
+
+Mientras que para el segundo flujo, debemos correr el script \texttt{./integration-tests.sh}.
+
+El segundo script \texttt{/integration-tests.sh} ejecuta las pruebas propias.
+Este archivo esta diseñado para poder agregar pruebas de forma sencilla, simplemente se debe agregar una linea en el sector de pruebas de la siguiente manera:\\
+
+\texttt{make\_test <nombre> <entrada de texto> <salida esperada>}
+
+Este script crea los archivos correspondientes en la carpeta tests (dentro del directorio sobre el cual se ejecuta).
+Los archivos creados son de la forma:
+
+\begin{itemize}
+	\item \texttt{test-<nombre del test>\_in}: archivo de entrada
+	\item \texttt{test-<nombre del test>\_out}: archivo de salida generado por el programa
+	\item \texttt{test-<nombre del test>\_expected}: archivo de salida esperado
+\end{itemize}
+
+\subsection{Corridas de Prueba}
+A continuación se muestran las corridas de prueba generadas por el script:
+
+\section{Conclusión}
+Al realizar este trabajo, comprendimos todo lo que implica simular un sistema operativo y lograr un entorno de desarrollo estable para trabajar a nivel MIPS.
+Gracias a  los flags de compilación vistos, pudimos obtener el código assembly de nuestro programa escrito en C. Nos resulto muy interesante que un programa no muy complejo y de pocas lineas, convertido a assembly ocupara tantas lineas. Es lógico, viendo que C es un lenguaje de un nivel mucho mas alto que assembly, y se abstrae de muchos elementos de la arquitectura de la computadora, que en assembly son más relevantes.
+Otra conclusion muy importante que obtuvimos, fue que el codigo assembly una vez que "te sacas el miedo" puede ser muy fuerte. Como dijimos antes, al ser de mas bajo nivel que C, tenemos que tener un monton de factores en consideracion (acceso a memoria, orden y uso del stack, responsabilidades de caller y callee, ect). Pero a su vez, tener el control y decision sobre todo esto, nos permite entender mucho mejor que es lo que realmente pasa a bajo nivel durante la ejecucion de nuestro programa, linea a linea.
+
+Como conclusión general, llegamos a que este práctico nos sirvió como iniciación a todo un mundo de desarrollo a bajo nivel, usando codigo MIPS, que previamente pasamos bastante por alto.
+
+\begin{lstlisting}
+
+Compiling Source
+Compilation Success
+Starting Tests
+
+Test: one_letter_a
+Test passed
+
+Test: empty_file
+Test passed
+
+
+--------------------
+All 9 tests passed!!!
+--------------------
+\end{lstlisting}
+
+
+
+\section{Código en C}
+
+\lstinputlisting[language=C]{hash.c}
+
+\section{Código en MIPS}
+\lstinputlisting[language=C]{hash.s}
+
+\section{Enunciado}
+El enunciado se encuentra anexado al final de este documento.
+
+
+
+\end{document}
