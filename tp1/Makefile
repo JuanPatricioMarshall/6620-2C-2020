@@ -12,6 +12,9 @@ tp1: tp1.c hash.c hash.S
 test: regressions
 	./regressions
 
+run_regressions: regressions
+	./regressions
+
 run: tp1
 	./tp1
 
