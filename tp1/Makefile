@@ -15,9 +15,6 @@ test: regressions
 run_regressions: regressions
 	./regressions
 
-run_integration_tests: tp1
-	./tp1
-
 run: tp1
 	./tp1
 
