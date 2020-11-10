@@ -133,40 +133,20 @@ main(int argc, char * const argv[])
 
     while ((read = getline(&line, &len, input_file)) != -1) {
         printf("%s", line);
-        fprintf(output_file, "%s hola", line);
+
+        string_hash hash;
+
+        string_hash_init(&hash);
+
+        string_hash_more(&hash, line, 0);
+
+        string_hash_done(&hash);
+
+        fprintf(output_file, "0x%04x", string_hash_value(&hash));
     }
 
     fclose(input_file);
     fclose(output_file);
-
-
-//    string_hash hash;
-//    char *msg = "mensaje para string hash";
-//    char *ptr;
-//    size_t len = strlen(msg);
-//    size_t delta;
-//    size_t stride;
-//    size_t rem;
-//    for (stride = len; stride >= 1; stride--) {
-//        string_hash_init(&hash);
-//        ptr = msg;
-//        rem = len;
-//
-//        while (rem) {
-//            if (rem >= stride)
-//                delta = stride;
-//            else
-//                delta = rem;
-//
-//            string_hash_more(&hash, ptr, delta);
-//            rem -= delta;
-//            ptr += delta;
-//        }
-//
-//        string_hash_done(&hash);
-//        printf("stride %zu hash 0x%04x\n",
-//               stride, string_hash_value(&hash));
-//    }
-
+    
     return 0;
 }
