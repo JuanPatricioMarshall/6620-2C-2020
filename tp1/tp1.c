@@ -103,10 +103,6 @@ main(int argc, char * const argv[])
         exit(0);
     }
 
-    // Probando las options
-    printf("Input file %s\n", input_filename);
-    printf("Output file %s\n", output_filename);
-
     // estableciendo los archivos de entrada y salida
     FILE *input_file = stdin;
     FILE *output_file = stdout;
