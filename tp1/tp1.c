@@ -52,6 +52,7 @@ main(int argc, char * const argv[])
     char *input_filename = NULL;
     char *output_filename = NULL;
 
+    ssize_t read;
     char * line = NULL;
     size_t len = 0;
 
@@ -139,33 +140,33 @@ main(int argc, char * const argv[])
     fclose(output_file);
 
 
-    string_hash hash;
-    char *msg = "mensaje para string hash";
-    char *ptr;
-    size_t len = strlen(msg);
-    size_t delta;
-    size_t stride;
-    size_t rem;
-    for (stride = len; stride >= 1; stride--) {
-        string_hash_init(&hash);
-        ptr = msg;
-        rem = len;
-
-        while (rem) {
-            if (rem >= stride)
-                delta = stride;
-            else
-                delta = rem;
-
-            string_hash_more(&hash, ptr, delta);
-            rem -= delta;
-            ptr += delta;
-        }
-
-        string_hash_done(&hash);
-        printf("stride %zu hash 0x%04x\n",
-               stride, string_hash_value(&hash));
-    }
+//    string_hash hash;
+//    char *msg = "mensaje para string hash";
+//    char *ptr;
+//    size_t len = strlen(msg);
+//    size_t delta;
+//    size_t stride;
+//    size_t rem;
+//    for (stride = len; stride >= 1; stride--) {
+//        string_hash_init(&hash);
+//        ptr = msg;
+//        rem = len;
+//
+//        while (rem) {
+//            if (rem >= stride)
+//                delta = stride;
+//            else
+//                delta = rem;
+//
+//            string_hash_more(&hash, ptr, delta);
+//            rem -= delta;
+//            ptr += delta;
+//        }
+//
+//        string_hash_done(&hash);
+//        printf("stride %zu hash 0x%04x\n",
+//               stride, string_hash_value(&hash));
+//    }
 
     return 0;
 }
