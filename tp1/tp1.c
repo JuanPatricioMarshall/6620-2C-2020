@@ -132,8 +132,8 @@ main(int argc, char * const argv[])
     // Aca leer de input de a 1 linea y llamar a string hash
 
     while ((read = getline(&line, &len, input_file)) != -1) {
-        printf("Retrieved line of length %zu:\n", read);
         printf("%s", line);
+        fprintf(output_file, "%s hola", line);
     }
 
     fclose(input_file);
