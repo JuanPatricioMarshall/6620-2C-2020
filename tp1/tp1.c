@@ -125,8 +125,7 @@ main(int argc, char * const argv[])
         }
     }
 
-    // Aca leer de input de a 1 linea y llamar a string hash
-
+    // Aca leemos una linea de input, inicializamos un hash, hasheamos la linea y terminamos escribiendolo en output
     while ((read = getline(&line, &len, input_file)) != -1) {
         
         string_hash hash;
@@ -137,7 +136,7 @@ main(int argc, char * const argv[])
 
         string_hash_done(&hash);
 
-        fprintf(output_file, "0x%04x %s\n", string_hash_value(&hash), line);
+        fprintf(output_file, "0x%04x %s", string_hash_value(&hash), line);
     }
 
     fclose(input_file);
