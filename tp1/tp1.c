@@ -41,13 +41,6 @@ print_version(){
 int
 main(int argc, char * const argv[])
 {
-    string_hash hash;
-    char *msg = "mensaje para string hash";
-    char *ptr;
-    size_t len = strlen(msg);
-    size_t delta;
-    size_t stride;
-    size_t rem;
 
     int opt= 0;
 
@@ -58,6 +51,9 @@ main(int argc, char * const argv[])
 
     char *input_filename = NULL;
     char *output_filename = NULL;
+
+    char * line = NULL;
+    size_t len = 0;
 
     static struct option long_options[] = {
             {"help",     no_argument,       0,  'h' },
@@ -113,7 +109,7 @@ main(int argc, char * const argv[])
     // estableciendo los archivos de entrada y salida
     FILE *input_file = stdin;
     FILE *output_file = stdout;
-    
+
     // si vino un -i y el filename es distinto a - hacemos un open de lectura del archivo de input
     if (input == 0 && strcmp(input_filename,  "-") != 0){
         input_file = fopen(input_filename,"r");
@@ -122,7 +118,7 @@ main(int argc, char * const argv[])
             return 1;
         }
     }
-    
+
     // si vino un -o y el filename es distinto a - hacemos un open de escritura del archivo de output
     if (output == 0 && strcmp(output_filename,  "-") != 0){
         output_file = fopen(output_filename,"w");
@@ -131,9 +127,25 @@ main(int argc, char * const argv[])
             return 1;
         }
     }
-    
+
     // Aca leer de input de a 1 linea y llamar a string hash
-    
+
+    while ((read = getline(&line, &len, input_file)) != -1) {
+        printf("Retrieved line of length %zu:\n", read);
+        printf("%s", line);
+    }
+
+    fclose(input_file);
+    fclose(output_file);
+
+
+    string_hash hash;
+    char *msg = "mensaje para string hash";
+    char *ptr;
+    size_t len = strlen(msg);
+    size_t delta;
+    size_t stride;
+    size_t rem;
     for (stride = len; stride >= 1; stride--) {
         string_hash_init(&hash);
         ptr = msg;
