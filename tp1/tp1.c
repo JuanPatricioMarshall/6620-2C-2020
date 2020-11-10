@@ -134,7 +134,7 @@ main(int argc, char * const argv[])
 
         string_hash_init(&hash);
 
-        string_hash_more(&hash, line, 0);
+        string_hash_more(&hash, line, read);
 
         string_hash_done(&hash);
 
