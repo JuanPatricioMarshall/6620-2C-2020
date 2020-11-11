@@ -143,9 +143,9 @@ Para las pruebas tenemos 2 flujos. El de tests de regresion provistos por la cat
 
 Para el primero, basta con correr \texttt{make run\_regressions}.
 
-Mientras que para el segundo flujo, debemos correr el script \texttt{./integration-tests.sh}.
+Mientras que para el segundo flujo, debemos correr el script \texttt{./tests.sh}.
 
-El segundo script \texttt{/integration-tests.sh} ejecuta las pruebas propias.
+El segundo script \texttt{/tests.sh} ejecuta las pruebas propias.
 Este archivo esta diseñado para poder agregar pruebas de forma sencilla, simplemente se debe agregar una linea en el sector de pruebas de la siguiente manera:\\
 
 \texttt{make\_test <nombre> <entrada de texto> <salida esperada>}
@@ -162,31 +162,45 @@ Los archivos creados son de la forma:
 \subsection{Corridas de Prueba}
 A continuación se muestran las corridas de prueba generadas por el script:
 
+\begin{lstlisting}
+Compiling Source
+Compilation Success
+Starting Tests
+
+Test: multiple_lines
+Test passed
+
+Test: empty_file
+Test passed
+
+Test: test_simple
+Test passed
+
+Test: test_simple2
+Test passed
+
+Test: only_letters_and_spaces
+Test passed
+
+Test: numbers_letters_and_spaces
+Test passed
+
+Test: long_line
+Test passed
+
+--------------------
+All 7 tests passed!!!
+--------------------
+\end{lstlisting}
+
+
+
 \section{Conclusión}
 Al realizar este trabajo, comprendimos todo lo que implica simular un sistema operativo y lograr un entorno de desarrollo estable para trabajar a nivel MIPS.
 Gracias a  los flags de compilación vistos, pudimos obtener el código assembly de nuestro programa escrito en C. Nos resulto muy interesante que un programa no muy complejo y de pocas lineas, convertido a assembly ocupara tantas lineas. Es lógico, viendo que C es un lenguaje de un nivel mucho mas alto que assembly, y se abstrae de muchos elementos de la arquitectura de la computadora, que en assembly son más relevantes.
 Otra conclusion muy importante que obtuvimos, fue que el codigo assembly una vez que "te sacas el miedo" puede ser muy fuerte. Como dijimos antes, al ser de mas bajo nivel que C, tenemos que tener un monton de factores en consideracion (acceso a memoria, orden y uso del stack, responsabilidades de caller y callee, ect). Pero a su vez, tener el control y decision sobre todo esto, nos permite entender mucho mejor que es lo que realmente pasa a bajo nivel durante la ejecucion de nuestro programa, linea a linea.
 
 Como conclusión general, llegamos a que este práctico nos sirvió como iniciación a todo un mundo de desarrollo a bajo nivel, usando codigo MIPS, que previamente pasamos bastante por alto.
-
-\begin{lstlisting}
-
-Compiling Source
-Compilation Success
-Starting Tests
-
-Test: one_letter_a
-Test passed
-
-Test: empty_file
-Test passed
-
-
---------------------
-All x tests passed!!!
---------------------
-\end{lstlisting}
-
 
 
 \section{Código en C}
@@ -203,7 +217,12 @@ All x tests passed!!!
 \lstinputlisting[language=C]{hash.s}
 
 \section{El código en MIPS generado por el compilador}
+\lstinputlisting[language=C]{tp1.s}
 \lstinputlisting[language=C]{hash.s}
+
+\section{El código de los tests de integración}
+\lstinputlisting[language=bash]{test.sh}
+
 
 \section{Enunciado}
 El enunciado se encuentra anexado al final de este documento.
