@@ -139,6 +139,14 @@ main(int argc, char * const argv[])
 
         fprintf(output_file, "0x%04x %s", string_hash_value(&hash), line);
     }
+    if (read == -1)
+    {
+        int err = errno;
+        if (feof(input_file) == 0)
+        {
+            fprintf(err_file, strerror(err));
+        }
+    }
 
     fclose(input_file);
     fclose(output_file);
