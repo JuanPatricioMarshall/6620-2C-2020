@@ -129,6 +129,18 @@ main(int argc, char * const argv[])
     // Aca leemos una linea de input, inicializamos un hash, hasheamos la linea y terminamos escribiendolo en output
     while ((read = getline(&line, &len, input_file)) != -1) {
         
+        if (read == -1) {
+            int err = errno;
+            if (feof(input_file) == 0)
+            {
+                fprintf(err_file, strerror(err));
+                fclose(input_file);
+                fclose(output_file);
+                fclose(err_file);
+                return err;
+            }
+        }
+        
         string_hash hash;
 
         string_hash_init(&hash);
@@ -139,14 +151,7 @@ main(int argc, char * const argv[])
 
         fprintf(output_file, "0x%04x %s", string_hash_value(&hash), line);
     }
-    if (read == -1)
-    {
-        int err = errno;
-        if (feof(input_file) == 0)
-        {
-            fprintf(err_file, strerror(err));
-        }
-    }
+
 
     fclose(input_file);
     fclose(output_file);
