@@ -35,7 +35,7 @@ print_usage() {
 
 static void
 print_version(){
-    printf("tp1 1.0\n");
+    printf("tp1 2.0\n");
 }
 
 int
