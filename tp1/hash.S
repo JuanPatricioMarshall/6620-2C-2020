@@ -81,7 +81,7 @@ while:
 	sw t0,8(t3)
 	b while
 assert_wrong:
-	li a0,1
+	li a0,2
 	li a2,53
 	la a1,error_msg
 	li v0,SYS_write

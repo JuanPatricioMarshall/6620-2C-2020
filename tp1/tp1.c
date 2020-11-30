@@ -35,7 +35,7 @@ print_usage() {
 
 static void
 print_version(){
-    printf("tp1 1.0\n");
+    printf("tp1 2.0\n");
 }
 
 int
@@ -106,12 +106,13 @@ main(int argc, char * const argv[])
     // estableciendo los archivos de entrada y salida
     FILE *input_file = stdin;
     FILE *output_file = stdout;
+    FILE *err_file = stderr;
 
     // si vino un -i y el filename es distinto a - hacemos un open de lectura del archivo de input
     if (input == 0 && strcmp(input_filename,  "-") != 0){
         input_file = fopen(input_filename,"r");
         if (input_file == NULL) {
-            printf ("can't open input file, errno = %d\n", errno);
+            fprintf(err_file, "can't open input file, errno = %d\n", errno);
             return 1;
         }
     }
@@ -120,7 +121,7 @@ main(int argc, char * const argv[])
     if (output == 0 && strcmp(output_filename,  "-") != 0){
         output_file = fopen(output_filename,"w");
         if (output_file == NULL) {
-            printf ("Can't open output file, errno = %d\n", errno);
+            fprintf(err_file, "Can't open output file, errno = %d\n", errno);
             return 1;
         }
     }
@@ -138,9 +139,18 @@ main(int argc, char * const argv[])
 
         fprintf(output_file, "0x%04x %s", string_hash_value(&hash), line);
     }
+    if (read == -1)
+    {
+        int err = errno;
+        if (feof(input_file) == 0)
+        {
+            fprintf(err_file, strerror(err));
+        }
+    }
 
     fclose(input_file);
     fclose(output_file);
-    
+    fclose(err_file);
+
     return 0;
 }
