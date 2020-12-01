@@ -1,0 +1,189 @@
+\documentclass[11pt,a4paper]{article}
+
+%Paquetes importados
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{listings}
+\usepackage[rgb,svgnames,table]{xcolor}
+\usepackage{pdfpages}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{afterpage}
+
+\addto\captionsspanish{
+	\renewcommand\tablename{Tabla}
+	\renewcommand\listtablename{Lista de tablas}
+	\renewcommand\lstlistingname{Código}
+	\renewcommand\lstlistlistingname{Lista de código}
+}
+
+\lstset{ % Defino el formato de bloques de código fuente
+	inputencoding=utf8, % Indico la codificación de los archivos de entrada
+	extendedchars=true, % Extiendo los caracteres
+	% Escapeo caracteres especiales
+	literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1,
+	showtabs=false, % Indica si se muestran los tabs
+	tabsize=2, % Indica la cantidad de espacios que ocupa un tab
+	showspaces=false, % Indica si muestra los espacios
+	showstringspaces=false, % Indica si muestra los espacios dentro de strings
+	numbers=left, % Posición en que se muestran los números de línea
+	numberstyle=\tiny\color{gray}, % Estilo de los números de línea
+	breaklines=true, % Se parten las líneas que exceden del ancho del documento
+	frame=single, % Formato del marco del entorno
+	backgroundcolor=\color{gray!5}, % Color de fondo
+	basicstyle=\ttfamily\footnotesize, % Estilo de base (familia, tamaño, color)
+	keywordstyle=\color{DarkBlue}, % Estilo de las palabras reservadas
+	stringstyle=\color{red}, % Estilo de los strings
+	commentstyle=\color{DarkGreen}, % Estilo de los comentarios
+	language=Octave, % Espeficica el lenguaje a usar
+	otherkeywords={std,cout} % Agrego palabras reservadas que no se resaltan
+}
+
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
+
+
+\pagestyle{fancy}
+
+\lhead[]{$2^{do}$ Cuatrimestre 2020\\TP 2}
+\chead[]{}
+\rhead[]{\includegraphics[scale=0.2]{logo_fiuba2}}
+
+\lfoot[]{}
+\cfoot[]{}
+\rfoot[]{\thepage / \pageref{LastPage}}
+
+\begin{document}
+\title{TP1 Organización de Computadoras}
+\date{\today}
+
+\begin{titlepage}
+	
+	\begin{figure}[H]
+		\raggedright
+		\includegraphics[scale=0.25]{logo_fiuba2.jpg}
+		\hfill
+		\raggedleft
+		\includegraphics[scale=0.2]{logo_uba.png}
+	\end{figure}
+	\rule{\textwidth}{1pt}\par % Thick horizontal line
+	\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+	\rule{\textwidth}{0.4pt}\par % Thin horizontal line
+	
+	\vspace{0.05\textheight} % Whitespace between the top lines and title
+	\centering % Center all text
+	{\Huge UBA FACULTAD DE INGENIERÍA}\\[0.5\baselineskip]
+	{\Large 66.20 Organización de Computadoras}\\[0.5\baselineskip]
+	{\Huge Trabajo Práctico 2}\\[0.75\baselineskip]
+	{\Large 2$^{do}$ Cuatrimestre 2020}\\[0.5\baselineskip]
+	\vspace{0.2\textheight}
+
+
+	\begin{flushleft}
+	\begin{table}[H]
+		\begin{flushleft}
+		\textbf{Integrantes:}\\
+		\vspace{0.01\textheight}
+		\begin{tabular}{l r}
+			Bacigalupo, Ivan  & 98064\\
+			\hspace{0.05\textheight}ibacigaluppo@fi.uba.ar&\\
+			Carballo, Matías   & 93762\\
+			\hspace{0.05\textheight}mcarballo@fi.uba.ar&\\
+			Marshall, Juan Patricio & 95471\\
+			\hspace{0.05\textheight}jmarshall@fi.uba.ar&\\
+		\end{tabular}
+		\end{flushleft}
+	\end{table}
+		
+
+	\end{flushleft}
+	\vspace{0.05\textheight}
+	\vspace{2pt}
+	\vfill
+	\rule{\textwidth}{1pt}\par % Thick horizontal line
+	\vspace{2pt}\vspace{-\baselineskip} % Whitespace between lines
+	\rule{\textwidth}{0.4pt}\par % Thin horizontal line
+	
+\end{titlepage}
+
+\blankpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introducción}
+El trabajo práctico consistió en un analisis teorico con una posterior simulacion de un benchmark para comparar distintos tipos de caches. Se realizarion en total 24 corridas del programa, variando entre los 3 tipos de cache presentadas (DM, 2WSA, 4WSA) y cambiando las dimensiones de la matriz cuadrada, input del programa, entre 1 y 8.
+Para las corridas, se utilizo el mismo ambiente MIPS que en el TP1, pero instalando manualmente una version arreglada de valgrind. Que nos permitio correr cachegrind y cg annotate, para asi poder sacar datos reales de las simulaciones. 
+Para generar los diferentes inputs, hicimos un mini script de python para generar los txts correspondientes. Al igual que generamos un bash script que ejecuta todas las simulaciones necesarias, escribiendo a cada uno de los archivos correspondientes.
+
+
+\section{Compilación}
+Para poder correr todas las simulaciones, basta con primero correr el Makefile provisto por la catedra para generar el ejecutbale mmult, y luego ejecutar el script de correr-simulacion.sh
+\texttt{./make tp1}
+\texttt{./correr-simulacion.sh}
+
+\section{Desarrollo y Análisis}
+
+\subsection{Hipótesis}
+Primeramente identifiquemos el experimento. El programa en C, se encarga de multiplicar matrices dado un input, que tiene las dimensiones de la matriz y todos sus elementos.
+Suponemos de por si, que este programa va a variar su comportamiento a nivel performance, tanto en tiempo como en memoria, tiempos de accesos, performances de caches, a medida que cambiemos las dimensiones de la matriz ingresada como input.
+
+A su vez, se quiere estudiar el comportamiento del programa, como benchmark, frente a 3 configuraciones distintas de cache.
+
+Direct Mapping es la cache donde las lecturas son mas rapidas, al mappearse direcciones de forma directa 1 a 1 y no se necesitan politicas de borrado (LRU, por ejemplo). Pero esto obviamente tiene un contraefecto muy fuerte: si en la ejecucion de un programa, se producen conflictos de manera permanente, el miss rate es mas grande de lo que uno supondria. Para poner un ejemplo, un progrma que simplemente carga 2 valores en memoria, pero ambos colisionan a la misma direccion en la cache, la carga de cualquiera de esos 2 valores, va a resultar en el pisado del otro. Por lo que, a pesar de tener todos los demas espacios de cache libre, lo que haria posible guardar ambos datos en cache, nos quedamos siempre con 1 solo de los 2. Esto resulta que en casos generales, pocos casos de uso real aplican caches de este estilo.
+
+En contraparte, las caches n-asociativas, como lo son las de 2 WSA y 4WSA, se basan en que para un mismo valor de "hash" de la cache, tienen n posiciones dedicadas para mantener datos. 
+Casos donde se producen colisiones permanentes, como el descrito en el analisis del Direct Mapping, desencadenaria en que se cachearan ambos datos. En otras palabras, en las caches n-asociativas, se permiten n colisiones/conflictos. Para un mismo valor de hash de la cache, se mantienen n valores. Esto sí obliga a aplicar politicas de borrado para decidir en casos de que ya haya n valores con ese hash cacheados, y estemos queriendo cargar un valor mas. 
+Obviamente, eso tambien tiene un costo, y como bien sabemos, no existen las balas de plata en la programacion. Al tener multiples valores para un mismo "hash", el tiempo necesario para saber si el dato que buscamos esta cacheado o no, aumenta en consideracion a un mapeo directo. Ahora necesitamos iterar por los distintos datos cargados, para saber realmente si nuestro dato estaba cacheado previamente o no. 
+
+Partiendo de caches de igual tamaño, si usamos direct mapping, cada posicion de la cache equivale a 1 valor del hash (bits mas significativos de la direccion de memoria). Mientras que en cada nivel de asociatividad nuevo, estamos bajando la cantidad de hashes posibles del cache, ya que ahora para 1 mismo valor del hash hay n posiciones posibles.
+
+\subsection{Simulacion}
+Para la simulacion, se realizaron 24 corridas en total, iterando por el combo del nivel de asociatividad 1(DM), 2(2WSA), 4(4WSA), y las dimensiones nXn de la matriz de input, variando de 1 a 8 monoincrementalmente.
+
+Ejecutando el script bash \texttt{./correr-simulacion.sh} post compilacion, se generan todos los outputs necesarios para contrastar nuestra hipotesis a la simulacion.
+
+ACA VAN LOS COMANDOS
+
+\subsection{Analisis de la simulacion} 
+
+ACA VAN LOS GRAFICOS
+
+\section{Conclusión}
+Al realizar este trabajo, comprendimos todo lo que implica simular un sistema operativo y lograr un entorno de desarrollo estable para trabajar a nivel MIPS.
+Gracias a  los flags de compilación vistos, pudimos obtener el código assembly de nuestro programa escrito en C. Nos resulto muy interesante que un programa no muy complejo y de pocas lineas, convertido a assembly ocupara tantas lineas. Es lógico, viendo que C es un lenguaje de un nivel mucho mas alto que assembly, y se abstrae de muchos elementos de la arquitectura de la computadora, que en assembly son más relevantes.
+Otra conclusion muy importante que obtuvimos, fue que el codigo assembly una vez que "te sacas el miedo" puede ser muy fuerte. Como dijimos antes, al ser de mas bajo nivel que C, tenemos que tener un monton de factores en consideracion (acceso a memoria, orden y uso del stack, responsabilidades de caller y callee, ect). Pero a su vez, tener el control y decision sobre todo esto, nos permite entender mucho mejor que es lo que realmente pasa a bajo nivel durante la ejecucion de nuestro programa, linea a linea.
+
+Como conclusión general, llegamos a que este práctico nos sirvió como iniciación a todo un mundo de desarrollo a bajo nivel, usando codigo MIPS, que previamente pasamos bastante por alto.
+
+
+\section{Código en C}
+\subsection{hash.c}
+\lstinputlisting[language=C]{hash.c}
+\subsection{hash.h}
+\lstinputlisting[language=C]{hash.h}
+\subsection{tp1.c}
+\lstinputlisting[language=C]{tp1.c}
+\subsection{regressions.c}
+\lstinputlisting[language=C]{regressions.c}
+
+\section{Código en MIPS}
+\lstinputlisting[language=C]{hash.s}
+
+\section{El código de los tests de integración}
+\lstinputlisting[language=bash]{test.sh}
+
+
+\section{Enunciado}
+El enunciado se encuentra anexado al final de este documento.
+
+
+\end{document}
