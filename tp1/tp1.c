@@ -133,7 +133,7 @@ main(int argc, char * const argv[])
             int err = errno;
             if (feof(input_file) == 0)
             {
-                fprintf(err_file, strerror(err));
+                fprintf(err_file, "%s", strerror(err));
                 fclose(input_file);
                 fclose(output_file);
                 fclose(err_file);
